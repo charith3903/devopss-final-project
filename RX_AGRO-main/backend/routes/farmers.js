@@ -1,6 +1,6 @@
 const router = require("express").Router();
 let Farmer = require("../models/farmer");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 const cors = require('cors');
 const bodyParser = require('body-parser');
