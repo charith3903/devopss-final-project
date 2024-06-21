@@ -1,0 +1,37 @@
+pipeline {
+    agent any 
+    
+    stages { 
+        stage('SCM Checkout') {
+            steps {
+                retry(3) {
+                    git branch: 'main', url: 'https://github.com/charith3903/devopss-final-project.git'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {  
+                bat 'docker build -t charith01/nodeapp-cuban:%BUILD_NUMBER% .'
+            }
+        }
+        stage('Login to Docker Hub') {
+            steps {
+               withCredentials([string(credentialsId: 'pw', variable: 'dockerhubpw')]) {
+                    script {
+                        bat "docker login -u charith01s -p %dockerhubpw%"
+                    }
+                }
+            }
+        }
+        stage('Push Image') {
+            steps {
+                bat 'docker push charith01/nodeapp-cuban:%BUILD_NUMBER%'
+            }
+        }
+    }
+    post {
+        always {
+            bat 'docker logout'
+        }
+    }
+}
